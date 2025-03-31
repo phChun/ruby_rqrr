@@ -1,4 +1,4 @@
-name: Ruby
+name: CI
 
 on:
   push:
@@ -28,4 +28,5 @@ jobs:
           cargo-cache: true
           rubygems: "3.6.2"
       - name: Run the default task
-        run: bundle exec rake test
+        run: bin/setup && bundle exec rake test
+
