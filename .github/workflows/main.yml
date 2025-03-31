@@ -28,5 +28,5 @@ jobs:
           cargo-cache: true
           rubygems: "3.6.2"
       - name: Run the default task
-        run: bin/setup && bundle exec rake test
+        run: bin/setup && bunldle exec rake compile && bundle exec rake test
 
