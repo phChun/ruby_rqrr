@@ -20,6 +20,10 @@ static QR_PARSE_ERROR: Lazy<ExceptionClass> = Lazy::new(|ruby| {
         .unwrap()
 });
 
+fn version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
 fn detect_qrs_in_image(ruby: &Ruby, file_path: String) -> Result<RArray, Error> {
     // Load the image
     let img_file = image::open(Path::new(&file_path))
@@ -43,5 +47,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     Lazy::force(&QR_PARSE_ERROR, ruby);
     ruby.get_inner(&RUBY_RQRR)
         .define_singleton_method("detect_qrs_in_image", function!(detect_qrs_in_image, 1))?;
+    ruby.get_inner(&RUBY_RQRR)
+        .define_singleton_method("version", function!(version, 0))?;
     Ok(())
 }
