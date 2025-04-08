@@ -4,7 +4,6 @@ use magnus::{
     RModule, Ruby,
 };
 use rqrr;
-use std::path::Path;
 
 static RUBY_RQRR: Lazy<RModule> = Lazy::new(|ruby| ruby.define_module("RubyRqrr").unwrap());
 
@@ -26,11 +25,24 @@ fn version() -> String {
 
 fn detect_qrs_in_image(ruby: &Ruby, file_path: String) -> Result<RArray, Error> {
     // Load the image
-    let img_file = image::open(Path::new(&file_path))
-        .map_err(|e| Error::new(exception::io_error(), e.to_string()))?
+    let img = image::ImageReader::open(&file_path)
+        .map_err(|e| {
+            Error::new(
+                exception::io_error(),
+                format!("Failed to open image: {}", e),
+            )
+        })?
+        .decode()
+        .map_err(|e| {
+            Error::new(
+                exception::io_error(),
+                format!("Failed to decode image: {}", e),
+            )
+        })?
         .to_luma8();
-    let mut img = rqrr::PreparedImage::prepare(img_file);
-    let grids = img.detect_grids();
+
+    let mut prepared_img = rqrr::PreparedImage::prepare(img);
+    let grids = prepared_img.detect_grids();
     let urls = RArray::new();
 
     for grid in grids {
