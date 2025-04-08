@@ -1,0 +1,16 @@
+[package]
+name = "ruby_rqrr"
+version = "0.9.0-1"
+edition = "2021"
+authors = ["Shawn Jordan <shawn.jordan@me.com>"]
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+image = { version ="0.25.5" }
+magnus = { version = "0.6.2" }
+rqrr = { version = "0.9.0"}
+url = { version = "2.5.4" }
