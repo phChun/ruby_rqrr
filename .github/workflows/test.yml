@@ -1,4 +1,4 @@
-name: Test
+name: CI
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  test:
+  ci:
     runs-on: ${{ matrix.os }}
     name: Ruby ${{ matrix.ruby }} Linting and Testing on ${{ matrix.os }}
     strategy:
