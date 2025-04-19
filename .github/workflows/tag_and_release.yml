@@ -20,6 +20,7 @@ jobs:
     with:
       gem_name: ruby_rqrr
       version_filepath: lib/ruby_rqrr/version.rb
+      toolchain: 1.86.0
       oxidized: true
       prepare: ${{ github.event_name == 'push' }}
       release: ${{ github.event_name == 'workflow_dispatch' || ((github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'release'))) }}
