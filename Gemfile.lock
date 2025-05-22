@@ -21,7 +21,9 @@ GEM
     rake (13.2.1)
     rake-compiler (1.2.8)
       rake
-    rb_sys (0.9.104)
+    rake-compiler-dock (1.9.1)
+    rb_sys (0.9.115)
+      rake-compiler-dock (= 1.9.1)
     regexp_parser (2.10.0)
     rubocop (1.73.2)
       json (~> 2.3)

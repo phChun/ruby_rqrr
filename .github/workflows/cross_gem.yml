@@ -1,0 +1,30 @@
+# .github/workflows/cross-gem.yml
+name: Cross Gem
+
+on:
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  cross_gems:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          [
+            "x86_64-linux",
+            "x86_64-linux-musl",
+            "aarch64-linux-musl",
+            "aarch64-linux",
+            "x86_64-darwin",
+            "arm64-darwin",
+          ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+      - uses: oxidize-rb/actions/cross-gem@v1
+        with:
+          platform: ${{ matrix.platform }}

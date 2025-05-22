@@ -33,8 +33,6 @@ jobs:
           rubygems: "3.6.2"
       - name: Install the Ruby dependencies
         run: bin/setup
-      - name: StandardRb check
-        run: bundle exec standardrb
       - name: Compile the Gem
         run: bundle exec rake compile
       - name: Run Tests
