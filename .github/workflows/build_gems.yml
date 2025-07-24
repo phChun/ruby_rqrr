@@ -1,40 +1,69 @@
-# # .github/workflows/cross-gem.yml
-# name: Build Native Gem
+---
+name: Build gems
 
-# on:
-#   push:
-#     branches: [main]
-#   pull_request:
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
 
-# jobs:
-#   build-native-gem:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         platform: [x86_64-linux, aarch64-linux, x86_64-darwin]
-#         ruby-version: [3.4]
-#     steps:
-#       - uses: actions/checkout@v4
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-#       - uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: ${{ matrix.ruby-version }}
-#           bundler-cache: true
+jobs:
+  ci-data:
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.fetch.outputs.result }}
+    steps:
+      - id: fetch
+        uses: oxidize-rb/actions/fetch-ci-data@v1
+        with:
+          supported-ruby-platforms: |
+            # Excluding:
+            # Windows for now
+            exclude: [x64-mingw-ucrt, x64-mingw32]
+          stable-ruby-versions: |
+            exclude: []
+  native:
+    name: Build native gems
+    needs: ci-data
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-platform: ${{ fromJSON(needs.ci-data.outputs.result).supported-ruby-platforms }}
+    steps:
+      - uses: actions/checkout@v4
 
-#       - name: Setup Rust
-#         uses: oxidize-rb/actions/setup-ruby-and-rust@v1
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
 
-#       - name: Build and package native gem
-#         uses: oxidize-rb/actions/cross-gem@v1
-#         id: cross-gem
-#         with:
-#           platform: ${{ matrix.platform }}
-#           ruby-versions: ${{ matrix.ruby-version }}
+      - uses: oxidize-rb/actions/cross-gem@v1
+        id: cross-gem
+        with:
+          platform: ${{ matrix.ruby-platform }}
+          ruby-versions: ${{ join(fromJSON(needs.ci-data.outputs.result).stable-ruby-versions, ',') }}
 
-#       - name: Download built gems
-#         uses: actions/download-artifact@v4
-#         with:
-#           name: cross-gem-${{ matrix.platform }}
-#           path: ${{ steps.cross-gem.outputs.gem-path }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cross-gem-${{ matrix.ruby-platform }}
+          path: ${{ steps.cross-gem.outputs.gem-path }}
+          if-no-files-found: error
+  source:
+    name: Build source gem
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+        ruby: ["3.4"]
+    steps:
+      - uses: actions/checkout@v4
 
-#       - run: ls -lha pkg/
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          cargo-cache: false
+          cache-version: v2
