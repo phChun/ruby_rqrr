@@ -1,39 +1,40 @@
-# .github/workflows/cross-gem.yml
-name: Build Native Gem
+# # .github/workflows/cross-gem.yml
+# name: Build Native Gem
 
-on:
-  push:
-    branches: [main]
-  pull_request:
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
 
-jobs:
-  build-native-gem:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform: [x86_64-linux, aarch64-linux, x86_64-darwin]
-        ruby-version: [3.4]
-    steps:
-      - uses: actions/checkout@v4
+# jobs:
+#   build-native-gem:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         platform: [x86_64-linux, aarch64-linux, x86_64-darwin]
+#         ruby-version: [3.4]
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true
+#       - uses: ruby/setup-ruby@v1
+#         with:
+#           ruby-version: ${{ matrix.ruby-version }}
+#           bundler-cache: true
 
-      - name: Setup Rust
-        uses: oxidize-rb/actions/setup-ruby-and-rust@v1
+#       - name: Setup Rust
+#         uses: oxidize-rb/actions/setup-ruby-and-rust@v1
 
-      - name: Build and package native gem
-        uses: oxidize-rb/cross-gem-action@v7
-        with:
-          platform: ${{ matrix.platform }}
-          ruby-versions: ${{ matrix.ruby-version }}
+#       - name: Build and package native gem
+#         uses: oxidize-rb/actions/cross-gem@v1
+#         id: cross-gem
+#         with:
+#           platform: ${{ matrix.platform }}
+#           ruby-versions: ${{ matrix.ruby-version }}
 
-      - name: Download built gems
-        uses: actions/download-artifact@v3
-        with:
-          name: cross-gem
-          path: pkg/
+#       - name: Download built gems
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: cross-gem-${{ matrix.platform }}
+#           path: ${{ steps.cross-gem.outputs.gem-path }}
 
-      - run: ls -lha pkg/
+#       - run: ls -lha pkg/
