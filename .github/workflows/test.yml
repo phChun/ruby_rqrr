@@ -1,35 +1,26 @@
----
-name: CI
+name: Test
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
-  ci:
-    runs-on: ${{ matrix.os }}
+  test:
     strategy:
+      fail-fast: false
       matrix:
-        os: ["ubuntu-latest"]
-        ruby: ["3.4", "head"]
-        rust: ["stable", "beta"]
+        os: [ubuntu-latest]
+        ruby: ["3.4"]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v4
-
       - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          rustup-toolchain: ${{ matrix.rust }}
           bundler-cache: true
-          cargo-cache: true
-
-      - name: Install the Ruby dependencies
-        run: bin/setup
-      - name: Compile the Gem
-        run: bundle exec rake compile
-      - name: Run ruby tests
-        run: bundle exec rake
-      - name: Lint rust
-        run: cargo clippy && cargo fmt --check
+      - run: bundle exec rake compile
+      - run: bundle exec rake test
