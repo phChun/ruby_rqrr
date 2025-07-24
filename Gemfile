@@ -5,6 +5,7 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in ruby_rqrr.gemspec
 gemspec
 
+gem "irb"
 gem "rake", "~> 13.0"
 gem "rake-compiler"
 gem "minitest", "~> 5.16"
