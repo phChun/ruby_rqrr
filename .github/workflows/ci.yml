@@ -50,7 +50,7 @@ jobs:
         run: bundle exec rake test
 
       - name: Lint ruby
-        run: bundle exec rake standard
+        run: bundle exec standardrb
 
       - name: Lint rust
         run: cargo clippy -- -D warnings && cargo fmt --check

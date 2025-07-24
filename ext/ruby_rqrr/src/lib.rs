@@ -1,9 +1,7 @@
-use image;
 use magnus::{
     exception, exception::ExceptionClass, function, prelude::*, value::Lazy, Error, RArray,
     RModule, Ruby,
 };
-use rqrr;
 
 static RUBY_RQRR: Lazy<RModule> = Lazy::new(|ruby| ruby.define_module("RubyRqrr").unwrap());
 
@@ -26,17 +24,12 @@ fn version() -> String {
 fn detect_qrs_in_image(ruby: &Ruby, file_path: String) -> Result<RArray, Error> {
     // Load the image
     let img = image::ImageReader::open(&file_path)
-        .map_err(|e| {
-            Error::new(
-                exception::io_error(),
-                format!("Failed to open image: {}", e),
-            )
-        })?
+        .map_err(|e| Error::new(exception::io_error(), format!("Failed to open image: {e}")))?
         .decode()
         .map_err(|e| {
             Error::new(
                 exception::io_error(),
-                format!("Failed to decode image: {}", e),
+                format!("Failed to decode image: {e}"),
             )
         })?
         .to_luma8();
