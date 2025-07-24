@@ -8,16 +8,15 @@ on:
 
 jobs:
   ci-data:
-    ci-data:
-      runs-on: ubuntu-latest
-      outputs:
-        result: ${{ steps.fetch.outputs.result }}
-      steps:
-        - id: fetch
-          uses: oxidize-rb/actions/fetch-ci-data@v1
-          with:
-            stable-ruby-versions: |
-              exclude: []
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.fetch.outputs.result }}
+    steps:
+      - id: fetch
+        uses: oxidize-rb/actions/fetch-ci-data@v1
+        with:
+          stable-ruby-versions: |
+            exclude: []
   ci:
     runs-on: ${{ matrix.os }}
     needs: ci-data
