@@ -35,7 +35,6 @@ jobs:
       fail-fast: false
       matrix:
         ruby-platform: ${{ fromJSON(needs.ci-data.outputs.result).supported-ruby-platforms }}
-        ruby-version: [3.4]
     steps:
       - uses: actions/checkout@v4
 
@@ -48,7 +47,7 @@ jobs:
         with:
           tag: 0.9.115
           platform: ${{ matrix.ruby-platform }}
-          ruby-versions: ${{ join(fromJSON(needs.ci-data.outputs.result).stable-ruby-versions, ',') }}
+          ruby-versions: 3.4
 
       - uses: actions/upload-artifact@v4
         with:
