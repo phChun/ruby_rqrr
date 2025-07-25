@@ -34,7 +34,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-platform: [3.4]
+        ruby-platform: ${{ fromJSON(needs.ci-data.outputs.result).supported-ruby-platforms }}
+        ruby-version: [3.4]
     steps:
       - uses: actions/checkout@v4
 
